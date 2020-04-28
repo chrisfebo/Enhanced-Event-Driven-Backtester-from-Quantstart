@@ -12,10 +12,8 @@ class DataHandler(object):
     """
     DataHandler is an abstract base class providing an interface for
     all subsequent (inherited) data handlers (both live and historic).
-
     The goal of a (derived) DataHandler object is to output a generated
     set of bars (OLHCVI) for each symbol requested.
-
     This will replicate how a live strategy would function as current
     market data would be sent "down the pipe". Thus a historic and live
     system will be treated identically by the rest of the backtesting suite.
@@ -52,10 +50,8 @@ class HistoricCSVDataHandler(DataHandler):
         """
         Initialises the historic data handler by requesting
         the location of the CSV files and a list of symbols.
-
         It will be assumed that all files are of the form
         'symbol.csv', where symbol is a string in the list.
-
         Parameters:
         events - The Event Queue.
         csv_dir - Absolute directory path to the CSV files.
