@@ -4,6 +4,11 @@ import datetime
 import numpy as np
 import pandas as pd
 
+try:
+    import Queue as queue
+except ImportError:
+    import queue
+
 from abc import ABCMeta, abstractmethod
 from math import floor
 
