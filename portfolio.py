@@ -137,7 +137,7 @@ class NaivePortfolio(Portfolio):
 
         for s in self.symbol_list:
             # Approximation to the real value
-            market_value = self.current_positions[s] * bars[s][0][5]
+            market_value = self.current_positions[s] * np.array([getattr(bar[1], 'adj_close') for bar in bars])
             dh[s] = market_value
             dh['total'] += market_value
 
