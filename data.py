@@ -3,6 +3,7 @@
 import datetime
 import os, os.path
 import pandas as pd
+import numpy as np
 
 from abc import ABCMeta, abstractmethod
 
@@ -24,10 +25,24 @@ class DataHandler(object):
     @abstractmethod
     def get_latest_bars(self, symbol, N=1):
         """
-        Returns the last N bars from the latest_symbol list,
-        or fewer if less bars are available.
+        Returns the last N bars or fewer if less bars are available.
         """
         raise NotImplementedError("Should implement get_latest_bars()")
+
+    @abstractmethod
+    def get_latest_bar_datetime(self, symbol):
+        """
+        Returns a datetime for the last bar
+        """
+        raise NotImplementedError("Should implement get_latest_bar_datetime()")
+
+    @abstractmethod
+    def get_latest_bars_values(self, symbol, value_type, N=1):
+        """
+        Returns the value of either Open, High, Low, Close, Volume, or OI
+        for the last N bars or fewer if less are available.
+        """
+        raise NotImplementedError("Should implement get_latest_bars_values()")
 
     @abstractmethod
     def update_bars(self):
@@ -71,9 +86,6 @@ class HistoricCSVDataHandler(DataHandler):
         """
         Opens the CSV files from the data directory, converting
         them into pandas DataFrames within a symbol dictionary.
-
-        For this handler it will be assumed that the data is
-        taken from DTN IQFeed. Thus its format will be respected.
         """
         comb_index = None
         for s in self.symbol_list:
@@ -100,7 +112,7 @@ class HistoricCSVDataHandler(DataHandler):
     def _get_new_bar(self, symbol):
         """
         Returns the latest bar from the data feed as a tuple of
-        (sybmbol, datetime, open, low, high, close, volume).
+        (symbol, datetime, open, low, high, close, adj_close, volume).
         """
         for b in self.symbol_data[symbol]:
             yield b
@@ -116,6 +128,29 @@ class HistoricCSVDataHandler(DataHandler):
             print ("That symbol is not available in the historical data set.")
         else:
             return bars_list[-N:]
+
+    def get_latest_bar_datetime(self, symbol):
+        """
+        Returns a datetime object for the latest bar
+        """
+        try:
+            bars_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print("That symbol is not available in the historical data set.")
+        else:
+            return bars_list[-1][0]
+
+    def get_latest_bars_values(self, symbol, value_type, N=1):
+        """
+        Returns the value of either Open, High, Low, Close, Volume, or OI
+        for the last N bars or fewer if less are available.
+        """
+        try:
+            bars_list = self.get_latest_bars(symbol,N)
+        except KeyError:
+            print("That symbol is not available in the historical data set.")
+        else:
+            return np.array([getattr(bar[1], value_type) for bar in bars_list])
 
     def update_bars(self):
         """
