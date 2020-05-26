@@ -6,7 +6,7 @@ import pandas as pd
 
 from abc import ABCMeta, abstractmethod
 
-from event import SignalEvent
+from event import SignalEvent, MarketEvent
 
 
 class Strategy(object):
