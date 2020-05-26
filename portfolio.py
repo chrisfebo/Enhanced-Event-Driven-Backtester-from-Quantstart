@@ -12,7 +12,7 @@ except ImportError:
 from abc import ABCMeta, abstractmethod
 from math import floor
 
-from event import FillEvent, OrderEvent
+from event import FillEvent, OrderEvent, SignalEvent
 from performance import create_sharpe_ratio, create_drawdowns
 
 
